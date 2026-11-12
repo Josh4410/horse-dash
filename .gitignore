@@ -1,0 +1,7 @@
+*.xcodeproj
+HorseDash/Info.plist
+xcuserdata/
+DerivedData/
+build/
+build.log
+.DS_Store
