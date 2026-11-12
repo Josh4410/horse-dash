@@ -1,0 +1,52 @@
+name: HorseDash
+options:
+  bundleIdPrefix: com.josh4410
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""
+targets:
+  HorseDash:
+    type: application
+    platform: iOS
+    sources: [HorseDash]
+    info:
+      path: HorseDash/Info.plist
+      properties:
+        CFBundleDisplayName: Horse Dash
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UIRequiresFullScreen: true
+        UIStatusBarHidden: true
+        UIViewControllerBasedStatusBarAppearance: false
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        CADisableMinimumFrameDurationOnPhone: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.josh4410.horsedash
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_STYLE: Automatic
+  HorseDashTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [HorseDashTests]
+    dependencies:
+      - target: HorseDash
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.josh4410.horsedash.tests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  HorseDash:
+    build:
+      targets:
+        HorseDash: all
+        HorseDashTests: [test]
+    test:
+      targets: [HorseDashTests]
