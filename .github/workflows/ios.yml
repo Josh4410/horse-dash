@@ -1,3 +1,4 @@
+
 name: iOS build and tests
 
 on:
@@ -8,22 +9,44 @@ on:
 jobs:
   test:
     runs-on: macos-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Install XcodeGen
         run: brew install xcodegen
+
       - name: Generate project
         run: xcodegen generate
+
       - name: Build and test
         run: |
           DEVICE=$(xcrun simctl list devices available | grep -m1 -oE 'iPhone [0-9]+[A-Za-z ]*' | sed -E 's/ +$//')
           echo "Simulator: $DEVICE"
-          status=0
+
           xcodebuild test \
             -project HorseDash.xcodeproj \
             -scheme HorseDash \
             -destination "platform=iOS Simulator,name=$DEVICE" \
-            CODE_SIGNING_ALLOWED=NO > build.log 2>&1 || status=$?
-          grep -E "error:|Test Case .* (passed|failed)|\*\* (BUILD|TEST)" build.log || true
-          if [ $status -ne 0 ]; then tail -n 80 build.log; fi
-          exit $status
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Build simulator app
+        run: |
+          xcodebuild build \
+            -project HorseDash.xcodeproj \
+            -scheme HorseDash \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Package app
+        run: |
+          cd build/Build/Products/Debug-iphonesimulator
+          zip -r "$GITHUB_WORKSPACE/HorseDash-Simulator.zip" HorseDash.app
+
+      - name: Upload simulator app
+        uses: actions/upload-artifact@v4
+        with:
+          name: HorseDash-Simulator
+          path: HorseDash-Simulator.zip
+          retention-days: 7
